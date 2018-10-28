@@ -101,8 +101,8 @@ class ESIM(nn.Module):
 
         # Classifier
         x = torch.cat([q1_rep, q2_rep], -1)
-        sim = self.fc(x)
-        return sim
+        similarity = self.fc(x)
+        return similarity
 
 
 
