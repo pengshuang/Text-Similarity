@@ -3,5 +3,6 @@
 ## Method list
 
     1. ESIM
-    2. ......
+    2. SiaGRU
+    3. ABCNN
 
