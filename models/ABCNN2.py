@@ -29,6 +29,7 @@ class ABCNN3(nn.Module):
         s1, s2 = self.embeds(s1), self.embeds(s2)
         # eg: s1 => res[0]
         # (batch_size, seq_len, dim) => (batch_size, dim)
+        # 如果 num_layer 为 0 的时候
         res[0].append(F.avg_pool1d(s1.transpose(1, 2), kernel_size=s1.size(1)).squeeze(-1))
         res[1].append(F.avg_pool1d(s2.transpose(1, 2), kernel_size=s2.size(1)).squeeze(-1))
         for i, conv in enumerate(self.conv):
