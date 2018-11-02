@@ -29,7 +29,7 @@ class ABCNN3(nn.Module):
         s1, s2 = self.embeds(s1), self.embeds(s2)
         # eg: s1 => res[0]
         # (batch_size, seq_len, dim) => (batch_size, dim)
-        # 如果 num_layer 为 0 的时候
+        # if num_layer == 0
         res[0].append(F.avg_pool1d(s1.transpose(1, 2), kernel_size=s1.size(1)).squeeze(-1))
         res[1].append(F.avg_pool1d(s2.transpose(1, 2), kernel_size=s2.size(1)).squeeze(-1))
         for i, conv in enumerate(self.conv):
@@ -56,8 +56,7 @@ class Wide_Conv(nn.Module):
         
     def forward(self, sent1, sent2, mask1, mask2):
         '''
-        sent1, sent2: batch_size*seq_len*dim
-        return 
+        sent1, sent2: batch_size * seq_len * dim
         '''
         # sent1, sent2 = sent1.transpose(0, 1), sent2.transpose(0, 1)
         # => A: batch_size * seq_len * seq_len
@@ -75,7 +74,6 @@ class Wide_Conv(nn.Module):
 
 def match_score(s1, s2, mask1, mask2):
     '''
-    1/(1+|x-y|)
     s1, s2:  batch_size * seq_len  * dim
     '''
     batch, seq_len, dim = s1.shape
