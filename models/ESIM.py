@@ -15,8 +15,6 @@ class ESIM(nn.Module):
         self.bn_embeds = nn.BatchNorm1d(self.embeds_dim)
         self.lstm1 = nn.LSTM(self.embeds_dim, self.hidden_size, batch_first=True, bidirectional=True)
         self.lstm2 = nn.LSTM(self.hidden_size*8, self.hidden_size, batch_first=True, bidirectional=True)
-        self.h0_0 = self.init_hidden(self.hidden_size)
-        self.h0_1 = self.init_hidden(self.hidden_size)
 
         self.fc = nn.Sequential(
             nn.BatchNorm1d(self.hidden_size * 8),
@@ -31,10 +29,6 @@ class ESIM(nn.Module):
             nn.Linear(args.linear_size, 2),
             nn.Softmax(dim=-1)
         )
-    
-    def init_hidden(self, hidden_size):
-        h0 = nn.Parameter(torch.zeros([2, 1, hidden_size]))
-        return h0
     
     def soft_attention_align(self, x1, x2, mask1, mask2):
         '''
