@@ -2,7 +2,7 @@
 
 ## Method list
 
-    1. ESIM
-    2. SiaGRU
-    3. ABCNN
+    1. ESIM (Enhanced LSTM for Natural Language Inferenc)
+    2. SiaGRU (Siamese Recurrent Architectures for Learning Sentence Similarity)
+    3. ABCNN (ABCNN: Attention-Based Convolutional Neural Network for Modeling Sentence Pairs)
 
