@@ -1,4 +1,3 @@
-from .modules import Swish
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -18,20 +17,14 @@ class SiaGRU(nn.Module):
         self.gru = nn.ModuleList([nn.GRU(self.embeds_dim, self.hidden_size, bidirectional=True)] +
                                  [nn.GRU(2 * self.hidden_size, self.hidden_size, bidirectional=True) for _ in range(self.num_layer-1)])
         self.h0 = self.init_hidden((2 * self.num_layer, 1, self.hidden_size))
+
         self.ln = nn.ModuleList([nn.LayerNorm(self.embeds_dim)] +
                                 [nn.LayerNorm(self.hidden_size) for _ in range(2 * self.num_layer)])
 
-        # self.fc = nn.Sequential(
-        #     nn.Linear((2*self.hidden_size)*(1+self.num_layer)*2, self.linear_size),
-        #     nn.LayerNorm(self.linear_size),
-        #     Swish(),
-        #     nn.Linear(self.linear_size, 2),
-        #     nn.Softmax()
-        # )
         self.fc1 = nn.Sequential(
             nn.Linear((2*self.hidden_size)*(1+self.num_layer)*2, self.linear_size),
             nn.LayerNorm(self.linear_size),
-            Swish(),
+            nn.ReLU(inplace=True),
             nn.Linear(self.linear_size, 1),
             # nn.Sigmoid()
         )
@@ -42,9 +35,6 @@ class SiaGRU(nn.Module):
             nn.Linear((2*self.hidden_size)*(1+self.num_layer), self.embeds_dim),
         )
         self.fc = nn.Sequential(
-            # nn.Linear(3, 50),
-            # nn.LayerNorm(50),
-            # Swish(),
             nn.BatchNorm1d(3),
             nn.Sigmoid(),
             nn.Linear(3, 2),
@@ -58,9 +48,12 @@ class SiaGRU(nn.Module):
         return h0
 
     def forward(self, *input):
+        # sent1: batch_size * seq_len
         sent1 = input[0]
         sent2 = input[1]
+        # x: (2 * batch_size) * seq_len
         x = torch.cat([sent1, sent2], 0)
+        # (2 * batch_size) * seq_len * dim => seq_len * (2 * batch_size) * dim
         x = self.embeds(x).permute(1, 0, 2)
         x = self.ln[0](x)
         hiddens = []
@@ -81,10 +74,7 @@ class SiaGRU(nn.Module):
         sim1 = self.fc1(torch.cat([x1, x2], 1))
         sim2 = torch.norm(self.fc2(x1)-self.fc2(x2), p=2, dim=-1, keepdim=True)
         sim3 = self.l3(F.cosine_similarity(self.fc3(x1), self.fc3(x2)).unsqueeze(1))
-        # import ipdb; ipdb.set_trace()
         sim = torch.cat([sim1, sim2, sim3], -1)
         return self.fc(sim)
-
-        # 18057145962
 
 
