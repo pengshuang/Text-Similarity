@@ -89,7 +89,7 @@ class ESIM(nn.Module):
 
         # Aggregate
         # input: batch_size * seq_len * (2 * hidden_size)
-        # output: batch_size * seq_len * (2 * hidden_size)
+        # output: batch_size * (4 * hidden_size)
         q1_rep = self.apply_multiple(q1_compose)
         q2_rep = self.apply_multiple(q2_compose)
 
