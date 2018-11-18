@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class BIMPM(nn.Module):
+class BiMPM(nn.Module):
     def __init__(self, args, data):
-        super(BIMPM, self).__init__()
+        super(BiMPM, self).__init__()
 
         self.args = args
         self.d = self.args.word_dim + int(self.args.use_char_emb) * self.args.char_hidden_size
@@ -15,7 +15,7 @@ class BIMPM(nn.Module):
         self.char_emb = nn.Embedding(args.char_vocab_size, args.char_dim, padding_idx=0)
 
         self.word_emb = nn.Embedding(args.word_vocab_size, args.word_dim)
-        # initialize word embedding with GloVe
+        # initialize word embedding with GloVe or Other pre-trained word embedding
         self.word_emb.weight.data.copy_(data.TEXT.vocab.vectors)
         # no fine-tuning for word vectors
         self.word_emb.weight.requires_grad = False
